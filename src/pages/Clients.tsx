@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, Plus, Phone, Mail, MapPin, Clock, Trash2, Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Plus, Phone, Mail, MapPin, Clock, Trash2, Pencil, Eye } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { ClientFormDialog } from "@/components/ClientFormDialog";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Clients() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -93,6 +95,9 @@ export default function Clients() {
                   </div>
 
                   <div className="flex gap-2 pt-1">
+                    <Button size="sm" variant="ghost" onClick={() => navigate(`/clientes/${client.id}`)}>
+                      <Eye className="h-3.5 w-3.5 mr-1" /> Ver
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => { setEditingClient(client); setDialogOpen(true); }}>
                       <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
                     </Button>
