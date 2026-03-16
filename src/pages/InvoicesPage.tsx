@@ -199,7 +199,7 @@ export default function InvoicesPage() {
 
     // Items table
     if (items && items.length > 0) {
-      autoTable(doc, {
+      (doc as any).autoTable({
         startY,
         head: [["Descrição", "Horas", "Taxa (€/h)", "Total (€)"]],
         body: items.map((item) => [
