@@ -69,7 +69,7 @@ export default function Dashboard() {
           <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowNewTask(true)}>
             <Plus className="h-4 w-4 mr-1" /> Nova Tarefa
           </Button>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" onClick={() => setShowWorkLog(true)}>
             <Timer className="h-4 w-4 mr-1" /> Registar Trabalho
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowNewClient(true)}>
