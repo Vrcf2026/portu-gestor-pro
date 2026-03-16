@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      checklist_template_items: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_template_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_templates: {
+        Row: {
+          category: string
+          created_at: string
+          equipment_type: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          equipment_type?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          equipment_type?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           address: string | null
@@ -259,6 +318,86 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_checklist_items: {
+        Row: {
+          checked: boolean
+          checked_at: string | null
+          checklist_id: string
+          created_at: string
+          id: string
+          label: string
+          notes: string | null
+          sort_order: number
+        }
+        Insert: {
+          checked?: boolean
+          checked_at?: string | null
+          checklist_id: string
+          created_at?: string
+          id?: string
+          label: string
+          notes?: string | null
+          sort_order?: number
+        }
+        Update: {
+          checked?: boolean
+          checked_at?: string | null
+          checklist_id?: string
+          created_at?: string
+          id?: string
+          label?: string
+          notes?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_checklist_items_checklist_id_fkey"
+            columns: ["checklist_id"]
+            isOneToOne: false
+            referencedRelation: "task_checklists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_checklists: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          task_id: string
+          template_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          task_id: string
+          template_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          task_id?: string
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_checklists_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_checklists_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
             referencedColumns: ["id"]
           },
         ]

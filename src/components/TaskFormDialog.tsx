@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select";
 import { useClients, useCreateTask, useUpdateTask, useDeleteTask, type Task, statusLabels, priorityLabels } from "@/hooks/useData";
 import { useToast } from "@/hooks/use-toast";
+import { TaskChecklistPanel } from "@/components/TaskChecklistPanel";
+import { Separator } from "@/components/ui/separator";
 
 interface TaskFormDialogProps {
   open: boolean;
@@ -155,6 +157,16 @@ export function TaskFormDialog({ open, onOpenChange, task }: TaskFormDialogProps
             <Label>Notas internas</Label>
             <Textarea {...register("notes")} placeholder="Notas..." rows={2} />
           </div>
+
+          {isEditing && task && (
+            <>
+              <Separator />
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Checklists</Label>
+                <TaskChecklistPanel taskId={task.id} />
+              </div>
+            </>
+          )}
 
           <div className="flex justify-between pt-2">
             <div>

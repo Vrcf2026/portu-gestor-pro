@@ -15,7 +15,7 @@ import { useClients, useDeleteInvoice } from "@/hooks/useData";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import "jspdf-autotable";
 
 type InvoiceStatus = Database["public"]["Enums"]["invoice_status"];
 
@@ -199,7 +199,7 @@ export default function InvoicesPage() {
 
     // Items table
     if (items && items.length > 0) {
-      autoTable(doc, {
+      (doc as any).autoTable({
         startY,
         head: [["Descrição", "Horas", "Taxa (€/h)", "Total (€)"]],
         body: items.map((item) => [
