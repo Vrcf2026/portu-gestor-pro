@@ -95,6 +95,9 @@ export default function Clients() {
                   </div>
 
                   <div className="flex gap-2 pt-1">
+                    <Button size="sm" variant="ghost" onClick={() => navigate(`/clientes/${client.id}`)}>
+                      <Eye className="h-3.5 w-3.5 mr-1" /> Ver
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => { setEditingClient(client); setDialogOpen(true); }}>
                       <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
                     </Button>
