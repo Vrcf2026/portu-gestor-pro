@@ -1,30 +1,21 @@
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useClients } from "@/hooks/useData";
+import { useContracts, useDeleteContract } from "@/hooks/useData";
 import { ContractFormDialog } from "@/components/ContractFormDialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ContractsPage() {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  const { data: contracts, isLoading } = useQuery({
-    queryKey: ["contracts"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("contracts")
-        .select("*, clients(company)")
-        .order("end_date", { ascending: true });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const [editingContract, setEditingContract] = useState<any>(null);
+  const { data: contracts, isLoading } = useContracts();
+  const deleteContract = useDeleteContract();
+  const { toast } = useToast();
 
   const filtered = (contracts || []).filter(
     (c) =>
@@ -34,6 +25,16 @@ export default function ContractsPage() {
 
   const today = new Date().toISOString().split("T")[0];
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Eliminar contrato "${name}"?`)) return;
+    try {
+      await deleteContract.mutateAsync(id);
+      toast({ title: "Contrato eliminado." });
+    } catch (e: any) {
+      toast({ title: "Erro", description: e.message, variant: "destructive" });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -41,7 +42,7 @@ export default function ContractsPage() {
           <h1 className="text-2xl md:text-3xl font-display font-bold">Contratos</h1>
           <p className="text-muted-foreground text-sm mt-1">{contracts?.length || 0} contratos</p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setDialogOpen(true)}>
+        <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => { setEditingContract(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4 mr-1" /> Novo Contrato
         </Button>
       </div>
@@ -99,6 +100,15 @@ export default function ContractsPage() {
                     <p>Período: {new Date(contract.start_date).toLocaleDateString("pt-PT")} — {new Date(contract.end_date).toLocaleDateString("pt-PT")}</p>
                     <p>Taxa: {contract.hourly_rate}€/hora</p>
                   </div>
+
+                  <div className="flex gap-2 pt-1">
+                    <Button size="sm" variant="ghost" onClick={() => { setEditingContract(contract); setDialogOpen(true); }}>
+                      <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDelete(contract.id, contract.name)}>
+                      <Trash2 className="h-3.5 w-3.5 mr-1" /> Eliminar
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -110,7 +120,7 @@ export default function ContractsPage() {
         <div className="text-center py-12 text-muted-foreground"><p>Nenhum contrato encontrado.</p></div>
       )}
 
-      <ContractFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <ContractFormDialog open={dialogOpen} onOpenChange={setDialogOpen} contract={editingContract} />
     </div>
   );
 }

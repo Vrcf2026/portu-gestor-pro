@@ -46,6 +46,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<AuthPage />} />
+            <Route path="/index" element={<AuthPage />} />
             <Route element={<ProtectedRoutes />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/tarefas" element={<Tasks />} />

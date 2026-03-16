@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MapPin, Plus, StickyNote, Monitor, FileText, Clock, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MapPin, Plus, StickyNote, Monitor, FileText, Clock, Pencil, Trash2, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -174,6 +174,7 @@ export default function ClientDetailPage() {
           <TabsTrigger value="notes"><StickyNote className="h-3.5 w-3.5 mr-1" />Notas ({notes?.length || 0})</TabsTrigger>
           <TabsTrigger value="tasks"><FileText className="h-3.5 w-3.5 mr-1" />Tarefas ({tasks?.length || 0})</TabsTrigger>
           <TabsTrigger value="equipment"><Monitor className="h-3.5 w-3.5 mr-1" />Equipamentos ({equipment?.length || 0})</TabsTrigger>
+          <TabsTrigger value="contracts"><ScrollText className="h-3.5 w-3.5 mr-1" />Contratos ({contracts?.length || 0})</TabsTrigger>
           <TabsTrigger value="worklogs"><Clock className="h-3.5 w-3.5 mr-1" />Registos ({workLogs?.length || 0})</TabsTrigger>
         </TabsList>
 
@@ -238,6 +239,32 @@ export default function ClientDetailPage() {
             </div>
           ))}
           {equipment?.length === 0 && <p className="text-sm text-muted-foreground py-4">Sem equipamentos.</p>}
+        </TabsContent>
+
+        <TabsContent value="contracts" className="mt-4 space-y-2">
+          {contracts?.map((c) => {
+            const pct = c.hours > 0 ? (c.used_hours / c.hours) * 100 : 0;
+            return (
+              <div key={c.id} className="p-3 rounded-lg bg-muted/50 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">{c.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(c.start_date).toLocaleDateString("pt-PT")} — {new Date(c.end_date).toLocaleDateString("pt-PT")} · {c.hourly_rate}€/h
+                    </p>
+                  </div>
+                  <Badge variant={c.active ? "default" : "secondary"} className="text-xs">
+                    {c.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
+                <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className={`h-full rounded-full ${pct > 85 ? "bg-destructive" : "bg-accent"}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                </div>
+                <p className="text-xs text-muted-foreground">{c.used_hours}h / {c.hours}h utilizadas</p>
+              </div>
+            );
+          })}
+          {contracts?.length === 0 && <p className="text-sm text-muted-foreground py-4">Sem contratos.</p>}
         </TabsContent>
 
         <TabsContent value="worklogs" className="mt-4 space-y-2">

@@ -1,17 +1,21 @@
 import { useState } from "react";
-import { Search, Plus, AlertTriangle } from "lucide-react";
+import { Search, Plus, AlertTriangle, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEquipment } from "@/hooks/useData";
+import { useEquipment, useDeleteEquipment } from "@/hooks/useData";
 import { EquipmentFormDialog } from "@/components/EquipmentFormDialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Equipment() {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingEquipment, setEditingEquipment] = useState<any>(null);
   const { data: equipment, isLoading } = useEquipment();
+  const deleteEquipment = useDeleteEquipment();
+  const { toast } = useToast();
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -38,6 +42,16 @@ export default function Equipment() {
     PC: "💻", NAS: "🗄️", Router: "📡", Switch: "🔀", CCTV: "📹", Servidor: "🖥️",
   };
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Eliminar "${name}"?`)) return;
+    try {
+      await deleteEquipment.mutateAsync(id);
+      toast({ title: "Equipamento eliminado." });
+    } catch (e: any) {
+      toast({ title: "Erro", description: e.message, variant: "destructive" });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -45,7 +59,7 @@ export default function Equipment() {
           <h1 className="text-2xl md:text-3xl font-display font-bold">Equipamentos</h1>
           <p className="text-muted-foreground text-sm mt-1">{equipment?.length || 0} equipamentos registados</p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setDialogOpen(true)}>
+        <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => { setEditingEquipment(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4 mr-1" /> Novo Equipamento
         </Button>
       </div>
@@ -66,7 +80,7 @@ export default function Equipment() {
             const expired = isWarrantyExpired(eq.warranty_end);
 
             return (
-              <Card key={eq.id} className={`border hover:shadow-md transition-shadow cursor-pointer ${expired ? "border-l-4 border-l-destructive" : nearEnd ? "border-l-4 border-l-warning" : ""}`}>
+              <Card key={eq.id} className={`border hover:shadow-md transition-shadow ${expired ? "border-l-4 border-l-destructive" : nearEnd ? "border-l-4 border-l-warning" : ""}`}>
                 <CardContent className="p-5 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
@@ -89,6 +103,14 @@ export default function Equipment() {
                     {eq.warranty_end && <p><span className="font-medium text-foreground">Garantia até:</span> {new Date(eq.warranty_end).toLocaleDateString("pt-PT")}</p>}
                     {eq.notes && <p className="italic mt-1">{eq.notes}</p>}
                   </div>
+                  <div className="flex gap-2 pt-1">
+                    <Button size="sm" variant="ghost" onClick={() => { setEditingEquipment(eq); setDialogOpen(true); }}>
+                      <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDelete(eq.id, `${eq.brand} ${eq.model}`)}>
+                      <Trash2 className="h-3.5 w-3.5 mr-1" /> Eliminar
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -100,7 +122,7 @@ export default function Equipment() {
         <div className="text-center py-12 text-muted-foreground"><p>Nenhum equipamento encontrado.</p></div>
       )}
 
-      <EquipmentFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <EquipmentFormDialog open={dialogOpen} onOpenChange={setDialogOpen} equipment={editingEquipment} />
     </div>
   );
 }
