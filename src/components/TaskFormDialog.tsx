@@ -116,7 +116,7 @@ export function TaskFormDialog({ open, onOpenChange, task }: TaskFormDialogProps
             </div>
             <div className="space-y-2">
               <Label>Estado</Label>
-              <Select value={status} onValueChange={(v) => setValue("status", v)}>
+              <Select value={status} onValueChange={(v) => setValue("status", v as any)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
