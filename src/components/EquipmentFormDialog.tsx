@@ -1,22 +1,16 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { useClients, useCreateEquipment } from "@/hooks/useData";
+import { useClients, useCreateEquipment, useUpdateEquipment } from "@/hooks/useData";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -26,29 +20,46 @@ const equipmentTypes: EquipmentType[] = ["PC", "NAS", "Router", "Switch", "CCTV"
 interface EquipmentFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  equipment?: any | null;
 }
 
-export function EquipmentFormDialog({ open, onOpenChange }: EquipmentFormDialogProps) {
+export function EquipmentFormDialog({ open, onOpenChange, equipment }: EquipmentFormDialogProps) {
   const { toast } = useToast();
   const { data: clients } = useClients();
   const createEquipment = useCreateEquipment();
+  const updateEquipment = useUpdateEquipment();
+  const isEditing = !!equipment;
 
   const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting } } = useForm({
     defaultValues: {
-      client_id: "",
-      type: "" as string,
-      brand: "",
-      model: "",
-      serial_number: "",
-      install_date: "",
-      warranty_end: "",
-      notes: "",
+      client_id: "", type: "" as string, brand: "", model: "",
+      serial_number: "", install_date: "", warranty_end: "", notes: "",
     },
   });
 
+  useEffect(() => {
+    if (equipment) {
+      reset({
+        client_id: equipment.client_id || "",
+        type: equipment.type || "",
+        brand: equipment.brand || "",
+        model: equipment.model || "",
+        serial_number: equipment.serial_number || "",
+        install_date: equipment.install_date || "",
+        warranty_end: equipment.warranty_end || "",
+        notes: equipment.notes || "",
+      });
+    } else {
+      reset({
+        client_id: "", type: "", brand: "", model: "",
+        serial_number: "", install_date: "", warranty_end: "", notes: "",
+      });
+    }
+  }, [equipment, reset]);
+
   const onSubmit = async (values: any) => {
     try {
-      await createEquipment.mutateAsync({
+      const payload = {
         client_id: values.client_id,
         type: values.type as EquipmentType,
         brand: values.brand,
@@ -57,9 +68,15 @@ export function EquipmentFormDialog({ open, onOpenChange }: EquipmentFormDialogP
         install_date: values.install_date || null,
         warranty_end: values.warranty_end || null,
         notes: values.notes || "",
-      });
-      toast({ title: "Equipamento registado com sucesso!" });
-      reset();
+      };
+
+      if (isEditing && equipment) {
+        await updateEquipment.mutateAsync({ id: equipment.id, ...payload });
+        toast({ title: "Equipamento atualizado!" });
+      } else {
+        await createEquipment.mutateAsync(payload);
+        toast({ title: "Equipamento registado!" });
+      }
       onOpenChange(false);
     } catch (e: any) {
       toast({ title: "Erro", description: e.message, variant: "destructive" });
@@ -70,7 +87,9 @@ export function EquipmentFormDialog({ open, onOpenChange }: EquipmentFormDialogP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display">Novo Equipamento</DialogTitle>
+          <DialogTitle className="font-display">
+            {isEditing ? "Editar Equipamento" : "Novo Equipamento"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -129,7 +148,7 @@ export function EquipmentFormDialog({ open, onOpenChange }: EquipmentFormDialogP
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
             <Button type="submit" disabled={isSubmitting} className="bg-accent text-accent-foreground hover:bg-accent/90">
-              {isSubmitting ? "A guardar..." : "Criar Equipamento"}
+              {isSubmitting ? "A guardar..." : isEditing ? "Guardar" : "Criar Equipamento"}
             </Button>
           </div>
         </form>

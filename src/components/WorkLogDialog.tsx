@@ -1,10 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Play, Square, Clock } from "lucide-react";
 import { useClients, useTasks, useCreateWorkLog } from "@/hooks/useData";
@@ -47,9 +40,28 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
       date: new Date().toISOString().split("T")[0],
       hours: 0,
       minutes: 0,
+      hourly_rate: 0,
       deduct_from_contract: true,
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      reset({
+        client_id: defaultClientId || "",
+        task_id: defaultTaskId || "",
+        description: "",
+        date: new Date().toISOString().split("T")[0],
+        hours: 0,
+        minutes: 0,
+        hourly_rate: 0,
+        deduct_from_contract: true,
+      });
+      setTimerSeconds(0);
+      setTimerRunning(false);
+      setTimerStartTime(null);
+    }
+  }, [open, defaultClientId, defaultTaskId, reset]);
 
   const clientId = watch("client_id");
   const clientTasks = tasks?.filter((t) => t.client_id === clientId && t.status !== "concluido" && t.status !== "faturado") || [];
@@ -96,13 +108,10 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
         date: values.date,
         hours: Number(values.hours),
         minutes: Number(values.minutes),
+        hourly_rate: Number(values.hourly_rate) || null,
         deduct_from_contract: values.deduct_from_contract,
       });
-      toast({ title: "Trabalho registado com sucesso!" });
-      reset();
-      setTimerSeconds(0);
-      setTimerRunning(false);
-      setTimerStartTime(null);
+      toast({ title: "Trabalho registado!" });
       onOpenChange(false);
     } catch (e: any) {
       toast({ title: "Erro", description: e.message, variant: "destructive" });
@@ -133,7 +142,7 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
           {clientId && clientTasks.length > 0 && (
             <div className="space-y-2">
               <Label>Tarefa (opcional)</Label>
-              <Select value={watch("task_id")} onValueChange={(v) => setValue("task_id", v)}>
+              <Select value={watch("task_id") || "none"} onValueChange={(v) => setValue("task_id", v)}>
                 <SelectTrigger><SelectValue placeholder="Associar a uma tarefa" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Sem tarefa</SelectItem>
@@ -150,9 +159,15 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
             <Textarea {...register("description", { required: true })} placeholder="O que foi feito..." rows={2} />
           </div>
 
-          <div className="space-y-2">
-            <Label>Data</Label>
-            <Input {...register("date")} type="date" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Data</Label>
+              <Input {...register("date")} type="date" />
+            </div>
+            <div className="space-y-2">
+              <Label>Taxa Horária (€)</Label>
+              <Input {...register("hourly_rate")} type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
           </div>
 
           {/* Timer */}

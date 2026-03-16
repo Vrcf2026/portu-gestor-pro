@@ -1,10 +1,7 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,18 +24,34 @@ export function ClientFormDialog({ open, onOpenChange, client }: ClientFormDialo
 
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm({
     defaultValues: {
-      name: client?.name || "",
-      company: client?.company || "",
-      phone: client?.phone || "",
-      email: client?.email || "",
-      address: client?.address || "",
-      city: client?.city || "",
-      notes: client?.notes || "",
-      contracted_hours: client?.contracted_hours?.toString() || "",
-      contract_start: client?.contract_start || "",
-      contract_end: client?.contract_end || "",
+      name: "", company: "", phone: "", email: "",
+      address: "", city: "", notes: "",
+      contracted_hours: "", contract_start: "", contract_end: "",
     },
   });
+
+  useEffect(() => {
+    if (client) {
+      reset({
+        name: client.name || "",
+        company: client.company || "",
+        phone: client.phone || "",
+        email: client.email || "",
+        address: client.address || "",
+        city: client.city || "",
+        notes: client.notes || "",
+        contracted_hours: client.contracted_hours?.toString() || "",
+        contract_start: client.contract_start || "",
+        contract_end: client.contract_end || "",
+      });
+    } else {
+      reset({
+        name: "", company: "", phone: "", email: "",
+        address: "", city: "", notes: "",
+        contracted_hours: "", contract_start: "", contract_end: "",
+      });
+    }
+  }, [client, reset]);
 
   const onSubmit = async (values: any) => {
     try {
@@ -51,12 +64,11 @@ export function ClientFormDialog({ open, onOpenChange, client }: ClientFormDialo
 
       if (isEditing && client) {
         await updateClient.mutateAsync({ id: client.id, ...payload });
-        toast({ title: "Cliente atualizado com sucesso!" });
+        toast({ title: "Cliente atualizado!" });
       } else {
         await createClient.mutateAsync(payload);
-        toast({ title: "Cliente criado com sucesso!" });
+        toast({ title: "Cliente criado!" });
       }
-      reset();
       onOpenChange(false);
     } catch (e: any) {
       toast({ title: "Erro", description: e.message, variant: "destructive" });
@@ -121,9 +133,7 @@ export function ClientFormDialog({ open, onOpenChange, client }: ClientFormDialo
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
             <Button type="submit" disabled={isSubmitting} className="bg-accent text-accent-foreground hover:bg-accent/90">
               {isSubmitting ? "A guardar..." : isEditing ? "Guardar" : "Criar Cliente"}
             </Button>

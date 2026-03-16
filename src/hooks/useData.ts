@@ -9,6 +9,7 @@ export type Equipment = Tables<"equipment">;
 export type Contract = Tables<"contracts">;
 export type TechnicalNote = Tables<"technical_notes">;
 export type Invoice = Tables<"invoices">;
+export type InvoiceItem = Tables<"invoice_items">;
 
 // ---- CLIENTS ----
 export function useClients() {
@@ -146,13 +147,36 @@ export function useCreateEquipment() {
   });
 }
 
+export function useUpdateEquipment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: TablesUpdate<"equipment"> & { id: string }) => {
+      const { data, error } = await supabase.from("equipment").update(updates).eq("id", id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["equipment"] }),
+  });
+}
+
+export function useDeleteEquipment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("equipment").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["equipment"] }),
+  });
+}
+
 // ---- WORK LOGS ----
-export function useWorkLogs(taskId?: string) {
+export function useWorkLogs(clientId?: string) {
   return useQuery({
-    queryKey: ["work_logs", taskId],
+    queryKey: ["work_logs", clientId],
     queryFn: async () => {
       let q = supabase.from("work_logs").select("*, clients(company), tasks(description)").order("date", { ascending: false });
-      if (taskId) q = q.eq("task_id", taskId);
+      if (clientId) q = q.eq("client_id", clientId);
       const { data, error } = await q;
       if (error) throw error;
       return data;
@@ -171,10 +195,104 @@ export function useCreateWorkLog() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["work_logs"] });
       qc.invalidateQueries({ queryKey: ["tasks"] });
+      qc.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 }
 
+export function useDeleteWorkLog() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("work_logs").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["work_logs"] });
+      qc.invalidateQueries({ queryKey: ["clients"] });
+    },
+  });
+}
+
+// ---- CONTRACTS ----
+export function useContracts() {
+  return useQuery({
+    queryKey: ["contracts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contracts")
+        .select("*, clients(company)")
+        .order("end_date", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useCreateContract() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (contract: TablesInsert<"contracts">) => {
+      const { data, error } = await supabase.from("contracts").insert(contract).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["contracts"] }),
+  });
+}
+
+export function useUpdateContract() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: TablesUpdate<"contracts"> & { id: string }) => {
+      const { data, error } = await supabase.from("contracts").update(updates).eq("id", id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["contracts"] }),
+  });
+}
+
+export function useDeleteContract() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("contracts").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["contracts"] }),
+  });
+}
+
+// ---- INVOICES ----
+export function useInvoices() {
+  return useQuery({
+    queryKey: ["invoices"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("invoices")
+        .select("*, clients(company)")
+        .order("issue_date", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useDeleteInvoice() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // Delete items first
+      await supabase.from("invoice_items").delete().eq("invoice_id", id);
+      const { error } = await supabase.from("invoices").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["invoices"] }),
+  });
+}
+
+// ---- LABELS ----
 export const statusLabels: Record<string, string> = {
   novo: "Novo Pedido",
   pendente: "Pendente",
