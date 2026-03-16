@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select";
 import { useClients, useCreateTask, useUpdateTask, useDeleteTask, type Task, statusLabels, priorityLabels } from "@/hooks/useData";
 import { useToast } from "@/hooks/use-toast";
+import { TaskChecklistPanel } from "@/components/TaskChecklistPanel";
+import { Separator } from "@/components/ui/separator";
 
 interface TaskFormDialogProps {
   open: boolean;
