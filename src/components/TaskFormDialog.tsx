@@ -103,7 +103,7 @@ export function TaskFormDialog({ open, onOpenChange, task }: TaskFormDialogProps
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Prioridade</Label>
-              <Select value={priority} onValueChange={(v) => setValue("priority", v)}>
+              <Select value={priority} onValueChange={(v) => setValue("priority", v as any)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
