@@ -99,6 +99,8 @@ export default function Equipment() {
       {!isLoading && filtered.length === 0 && (
         <div className="text-center py-12 text-muted-foreground"><p>Nenhum equipamento encontrado.</p></div>
       )}
+
+      <EquipmentFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }
