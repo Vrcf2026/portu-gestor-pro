@@ -45,7 +45,7 @@ export default function Equipment() {
           <h1 className="text-2xl md:text-3xl font-display font-bold">Equipamentos</h1>
           <p className="text-muted-foreground text-sm mt-1">{equipment?.length || 0} equipamentos registados</p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-1" /> Novo Equipamento
         </Button>
       </div>
