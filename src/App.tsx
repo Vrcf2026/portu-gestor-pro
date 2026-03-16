@@ -15,6 +15,7 @@ import ContractsPage from "@/pages/ContractsPage";
 import InvoicesPage from "@/pages/InvoicesPage";
 import ReportsPage from "@/pages/ReportsPage";
 import QuickEntryPage from "@/pages/QuickEntryPage";
+import ChecklistTemplatesPage from "@/pages/ChecklistTemplatesPage";
 import AuthPage from "@/pages/AuthPage";
 import NotFound from "@/pages/NotFound";
 
