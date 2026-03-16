@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { ClientFormDialog } from "@/components/ClientFormDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WorkLogDialog } from "@/components/WorkLogDialog";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function Dashboard() {
   const { data: tasks, isLoading: loadingTasks } = useTasks();
   const [showNewTask, setShowNewTask] = useState(false);
   const [showNewClient, setShowNewClient] = useState(false);
+  const [showWorkLog, setShowWorkLog] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -67,7 +69,7 @@ export default function Dashboard() {
           <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowNewTask(true)}>
             <Plus className="h-4 w-4 mr-1" /> Nova Tarefa
           </Button>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" onClick={() => setShowWorkLog(true)}>
             <Timer className="h-4 w-4 mr-1" /> Registar Trabalho
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowNewClient(true)}>
@@ -172,6 +174,7 @@ export default function Dashboard() {
 
       <TaskFormDialog open={showNewTask} onOpenChange={setShowNewTask} />
       <ClientFormDialog open={showNewClient} onOpenChange={setShowNewClient} />
+      <WorkLogDialog open={showWorkLog} onOpenChange={setShowWorkLog} />
     </div>
   );
 }

@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEquipment } from "@/hooks/useData";
+import { EquipmentFormDialog } from "@/components/EquipmentFormDialog";
 
 export default function Equipment() {
   const [search, setSearch] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { data: equipment, isLoading } = useEquipment();
 
   const today = new Date().toISOString().split("T")[0];
@@ -43,7 +45,7 @@ export default function Equipment() {
           <h1 className="text-2xl md:text-3xl font-display font-bold">Equipamentos</h1>
           <p className="text-muted-foreground text-sm mt-1">{equipment?.length || 0} equipamentos registados</p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-1" /> Novo Equipamento
         </Button>
       </div>
@@ -97,6 +99,8 @@ export default function Equipment() {
       {!isLoading && filtered.length === 0 && (
         <div className="text-center py-12 text-muted-foreground"><p>Nenhum equipamento encontrado.</p></div>
       )}
+
+      <EquipmentFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }
