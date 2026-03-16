@@ -241,6 +241,32 @@ export default function ClientDetailPage() {
           {equipment?.length === 0 && <p className="text-sm text-muted-foreground py-4">Sem equipamentos.</p>}
         </TabsContent>
 
+        <TabsContent value="contracts" className="mt-4 space-y-2">
+          {contracts?.map((c) => {
+            const pct = c.hours > 0 ? (c.used_hours / c.hours) * 100 : 0;
+            return (
+              <div key={c.id} className="p-3 rounded-lg bg-muted/50 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">{c.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(c.start_date).toLocaleDateString("pt-PT")} — {new Date(c.end_date).toLocaleDateString("pt-PT")} · {c.hourly_rate}€/h
+                    </p>
+                  </div>
+                  <Badge variant={c.active ? "default" : "secondary"} className="text-xs">
+                    {c.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
+                <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className={`h-full rounded-full ${pct > 85 ? "bg-destructive" : "bg-accent"}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                </div>
+                <p className="text-xs text-muted-foreground">{c.used_hours}h / {c.hours}h utilizadas</p>
+              </div>
+            );
+          })}
+          {contracts?.length === 0 && <p className="text-sm text-muted-foreground py-4">Sem contratos.</p>}
+        </TabsContent>
+
         <TabsContent value="worklogs" className="mt-4 space-y-2">
           {workLogs?.map((log) => (
             <div key={log.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
