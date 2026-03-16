@@ -174,6 +174,7 @@ export default function Dashboard() {
 
       <TaskFormDialog open={showNewTask} onOpenChange={setShowNewTask} />
       <ClientFormDialog open={showNewClient} onOpenChange={setShowNewClient} />
+      <WorkLogDialog open={showWorkLog} onOpenChange={setShowWorkLog} />
     </div>
   );
 }
