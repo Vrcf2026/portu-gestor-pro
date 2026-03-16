@@ -91,7 +91,7 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
     try {
       await createWorkLog.mutateAsync({
         client_id: values.client_id,
-        task_id: values.task_id || null,
+        task_id: values.task_id && values.task_id !== "none" ? values.task_id : null,
         description: values.description,
         date: values.date,
         hours: Number(values.hours),
