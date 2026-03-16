@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Users, ClipboardList, Monitor, FileText, Calendar,
-  BarChart3, Receipt, LogOut, Zap,
+  BarChart3, Receipt, LogOut, Zap, ListChecks,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
