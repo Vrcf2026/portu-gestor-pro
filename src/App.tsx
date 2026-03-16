@@ -14,6 +14,7 @@ import CalendarPage from "@/pages/CalendarPage";
 import ContractsPage from "@/pages/ContractsPage";
 import InvoicesPage from "@/pages/InvoicesPage";
 import ReportsPage from "@/pages/ReportsPage";
+import QuickEntryPage from "@/pages/QuickEntryPage";
 import AuthPage from "@/pages/AuthPage";
 import NotFound from "@/pages/NotFound";
 
@@ -32,9 +33,7 @@ function ProtectedRoutes() {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  return (
-    <AppLayout />
-  );
+  return <AppLayout />;
 }
 
 const App = () => (
@@ -57,6 +56,7 @@ const App = () => (
               <Route path="/calendario" element={<CalendarPage />} />
               <Route path="/relatorios" element={<ReportsPage />} />
               <Route path="/faturacao" element={<InvoicesPage />} />
+              <Route path="/registo-rapido" element={<QuickEntryPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
