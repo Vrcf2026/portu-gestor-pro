@@ -11,6 +11,7 @@ import { ClientFormDialog } from "@/components/ClientFormDialog";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Clients() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
