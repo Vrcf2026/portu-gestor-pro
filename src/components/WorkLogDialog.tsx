@@ -91,7 +91,7 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
     try {
       await createWorkLog.mutateAsync({
         client_id: values.client_id,
-        task_id: values.task_id || null,
+        task_id: values.task_id && values.task_id !== "none" ? values.task_id : null,
         description: values.description,
         date: values.date,
         hours: Number(values.hours),
@@ -136,7 +136,7 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
               <Select value={watch("task_id")} onValueChange={(v) => setValue("task_id", v)}>
                 <SelectTrigger><SelectValue placeholder="Associar a uma tarefa" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Sem tarefa</SelectItem>
+                  <SelectItem value="none">Sem tarefa</SelectItem>
                   {clientTasks.map((t) => (
                     <SelectItem key={t.id} value={t.id}>{t.description}</SelectItem>
                   ))}
