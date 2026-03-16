@@ -174,6 +174,7 @@ export default function ClientDetailPage() {
           <TabsTrigger value="notes"><StickyNote className="h-3.5 w-3.5 mr-1" />Notas ({notes?.length || 0})</TabsTrigger>
           <TabsTrigger value="tasks"><FileText className="h-3.5 w-3.5 mr-1" />Tarefas ({tasks?.length || 0})</TabsTrigger>
           <TabsTrigger value="equipment"><Monitor className="h-3.5 w-3.5 mr-1" />Equipamentos ({equipment?.length || 0})</TabsTrigger>
+          <TabsTrigger value="contracts"><ScrollText className="h-3.5 w-3.5 mr-1" />Contratos ({contracts?.length || 0})</TabsTrigger>
           <TabsTrigger value="worklogs"><Clock className="h-3.5 w-3.5 mr-1" />Registos ({workLogs?.length || 0})</TabsTrigger>
         </TabsList>
 
