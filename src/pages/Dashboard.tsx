@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { ClientFormDialog } from "@/components/ClientFormDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WorkLogDialog } from "@/components/WorkLogDialog";
 
 export default function Dashboard() {
   const navigate = useNavigate();
