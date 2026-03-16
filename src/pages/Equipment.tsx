@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEquipment } from "@/hooks/useData";
+import { EquipmentFormDialog } from "@/components/EquipmentFormDialog";
 
 export default function Equipment() {
   const [search, setSearch] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { data: equipment, isLoading } = useEquipment();
 
   const today = new Date().toISOString().split("T")[0];
