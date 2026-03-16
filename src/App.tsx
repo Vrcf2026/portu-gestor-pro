@@ -58,6 +58,7 @@ const App = () => (
               <Route path="/relatorios" element={<ReportsPage />} />
               <Route path="/faturacao" element={<InvoicesPage />} />
               <Route path="/registo-rapido" element={<QuickEntryPage />} />
+              <Route path="/checklists" element={<ChecklistTemplatesPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

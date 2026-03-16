@@ -17,6 +17,7 @@ const mainItems = [
   { title: "Tarefas", url: "/tarefas", icon: ClipboardList },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Equipamentos", url: "/equipamentos", icon: Monitor },
+  { title: "Checklists", url: "/checklists", icon: ListChecks },
 ];
 
 const managementItems = [
