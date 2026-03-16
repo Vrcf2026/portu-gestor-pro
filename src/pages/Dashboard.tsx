@@ -25,6 +25,7 @@ export default function Dashboard() {
   const { data: tasks, isLoading: loadingTasks } = useTasks();
   const [showNewTask, setShowNewTask] = useState(false);
   const [showNewClient, setShowNewClient] = useState(false);
+  const [showWorkLog, setShowWorkLog] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
 
