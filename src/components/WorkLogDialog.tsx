@@ -136,7 +136,7 @@ export function WorkLogDialog({ open, onOpenChange, defaultClientId, defaultTask
               <Select value={watch("task_id")} onValueChange={(v) => setValue("task_id", v)}>
                 <SelectTrigger><SelectValue placeholder="Associar a uma tarefa" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Sem tarefa</SelectItem>
+                  <SelectItem value="none">Sem tarefa</SelectItem>
                   {clientTasks.map((t) => (
                     <SelectItem key={t.id} value={t.id}>{t.description}</SelectItem>
                   ))}
